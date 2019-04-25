@@ -1,0 +1,131 @@
+h1. GoJSで定義されているグラフ構造についての解説
+
+ここでは、JavascriptでGoJSの各種要素を記述する際に参考になりそうな、GoJSでのグラフを記述するイメージを紹介する。
+
+GoJSにおけるグラフの構造をHTMLの構造っぽく（HTMLで実際に表現されるわけではないが）表現すると以下のようになる。
+この構造を意識すると、GoJSのJavascripコードにおける各関数や変数がどの部分に影響を与えているのかが掴みやすくなる。
+
+<pre>
+<div>
+	<Diagram>
+		{
+			options: ...
+			<Layout>
+				{options: ...}
+			</Layout>
+		}
+		<Layer1>
+			<Part(Node)>
+					{options: ...}
+				<GraphObject (TextBlock)>
+					{options: ...}
+				</GraphObject (TextBlock)>
+				<GraphObject (Shape)>
+					{options: ...}
+				</GraphObject (Shape)>
+				<Panel>
+					<GraphObject (...)>
+						{options: ...}
+					</GraphObject (...)>
+					<GraphObject (...)>
+					</GraphObject (...)>
+				</Panel>
+			</Part (Node)>
+			<Part (Link)>
+				{options: ...}
+			</Part (Link)>
+			<Part (Group)>
+				<Panel>
+					<GraphObject (...)>
+						{options: ...}
+					</GraphObject (...)>
+					<GraphObject (...)>
+					</GraphObject (...)>
+				</Panel>
+			</Part (Group)>
+		</Layer1>
+		<Layer2>
+			<Part (Node)>
+				<...>
+			</Part (Node)>
+			<Part (Link)>
+				<...>
+			</Part (Link)>
+		</Layer2>
+		<Model>
+			[
+				{options: ...}
+			]
+		</Model>
+	</Diagram>
+</div>
+</pre>
+
+h3. "Diagram":https://gojs.net/latest/api/symbols/Diagram.html
+
+DiagramはHTMLのDIV要素に関連付けられている。
+これを作成すると、いくつかのHelper DIVに加えて、指定されたDIV要素の内部に配置されるHTML Canvas要素が作成される。
+GoJSはDiagramを通じてこのDIVの内容を管理する。
+DIVの内容を変更することはできないが、必要に応じてDIV（背景、枠線など）をスタイルしたり、位置やサイズを変更したりすることができる。
+
+h3. options
+
+GoJSで作成できるさまざまな要素のうちほぼ全てで設定することができるBoolean値や数値、文字列値。
+{ option名: option値 }のように表記される。
+
+h3. "Layout":https://gojs.net/latest/api/symbols/Layout.html
+
+Layoutは、Diagramの中の要素をどのように配置するかの大まかな指標をDiagramに提供する。
+Diagramで明示的に設定せずともデフォルト設定が存在しており、nullにすることはできない。
+
+h3. "Layer":https://gojs.net/latest/api/symbols/Layer.html
+
+Layerは、図の中の他のパーツの集合の前または後ろに名前付きパーツの集合がどのように描かれるかを管理する。
+Layerが保持できるのはNodeやLinkのような曖昧なPart要素で、具体的なGraphObject要素を保持することはできない。
+
+h3. "Part":https://gojs.net/latest/api/symbols/Part.html
+
+ユーザーが操作するすべてのトップレベルオブジェクトの基本クラス。
+これ自体を直接扱うことは少なく、実際にはこれを継承しているNodeやLinkを扱うことのほうが多い。
+
+h3. "Node":https://gojs.net/latest/api/symbols/Node.html
+
+Nodeは、Linkを持つ他のNodeに接続できる、またはGroupのメンバーであるPart。
+基本的には、グラフにおける1データごとの情報を表示する役割を持つ。
+Linkと密接な関係にあり、自身のどこの部分にLinkを接続させるかというPort要素を持つ。
+
+h3. "GraphObject":https://gojs.net/latest/api/symbols/GraphObject.html
+
+グラフ内で表示する全てのオブジェクトの継承元になるクラス。
+Shape、TextBlock、Picture、Panel（やそれを継承するPart, Node, Link）などはGraphObjectが継承元である。
+
+h3. "TextBlock":https://gojs.net/latest/api/symbols/TextBlock.html
+
+グラフ上に文字列を記述する際に用いられるGraphObject。
+あくまでも文字列のみで、囲い線や背景の役割は別のGraphObjectが持つ。
+
+h3. "Shape":https://gojs.net/latest/api/symbols/Shape.html
+
+幾何学的図形を示すGraphObject。図形だけでなく、図形内部の色もShapeで設定できる。
+
+h3. "Panel":https://gojs.net/latest/api/symbols/Panel.html
+
+Panelは他のGraphObjectをその要素として保持するGraphObject。
+Panel自体は、内部に保持する要素のサイズ調整と配置を担当する。
+内部の要素は、Panelに入力された順に、設定された配置に従って描画される。
+
+h3. "Link":https://gojs.net/latest/api/symbols/Link.html
+
+LinkはNodeとNodeとを接続する部分。線のような可視化はもちろん、線などを表示しない不可視の状態で存在させることもできる。
+接続の向きは、Link.fromNodeプロパティからLink.toNodeプロパティに向かう。 
+また、Link.fromPortIdプロパティとLink.toPortIdプロパティで指定されたNodeの特定のPort要素に接続できる。
+
+h3. "Group":https://gojs.net/latest/api/symbols/Group.html
+
+Groupは、メンバーであるNodeとLinkのSubGraphを含むことができるNode。
+複数のNodeやLinkの集合を一つのNodeとしてまとめて扱える、というイメージ。
+
+h3. "Model":https://gojs.net/latest/api/symbols/Model.html
+
+Modelは図形の重要なデータを保持している。基本的なエンティティとそのプロパティと関係を、
+NodeとLinkとGroupの外観と動作を視覚的に指定することなく記述することができる。
