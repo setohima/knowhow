@@ -1,0 +1,63 @@
+windowsの中にvirtualboxを立ててubuntu18.04を立ててdockerを利用してNginxによってwebserverを立てて、
+そのサーバーに同一wi-fi(同一LAN)の端末(MacとかAndroid)からアクセスできるようにするまで
+
+1. windows上のvirtualboxのネットワーク設定
+初期設定で存在するNATアダプターの「ポートフォワーディング」で80番ポートを80番ポートに転送する。
+
+2. windows上のファイアウォール設定
+コンパネ→システムとセキュリティ→windows defender ファイアウォール→詳細設定
+受信の規則を新規作成
+プライベートプロファイルで80番ポートを通すように設定する
+
+3. Ubuntu上のファイアウォール設定
+GUIでカンタンにファイアウォールを設定できるようにするソフトを導入する。
+$ sudo add-apt-repository -y -n ppa:sicklylife/ppa
+$ sudo apt update
+$ sudo apt i install gufw
+インストールが終わるとアプリケーション一覧に”ファイアウォール”が追加されるのでクリック
+ステータスをオンにする
+ルールの＋をクリック、簡易でポートに80を入力して追加→閉じる→ファイアウォールを閉じる
+
+4. dockerを導入する
+$ sudo apt-get update
+$ sudo apt-get instal -y ¥
+  apt-transport-https ¥
+  ca-certificates ¥
+  curl ¥
+  software-properties-common
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository ¥
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu ¥
+  $(lsb_release -cs) ¥
+  stable"
+$ sudo apt-get update
+$ sudo apt-get install docker-ce
+$ docker container run ubuntu:latest /bin/echo 'Hello, world!'
+
+これを実行した結果、最後に'Hello, world!'と表示されればdockerインスコＯＫ
+
+5. dockerでweb鯖を立てる
+nginxというオープンソースのweb鯖を使う
+
+$ docker pull nginx
+$ docker container run --name webserver -d -p 80:80 nginx
+
+この時点でubuntu内でブラウザを開いてlocalhostするとnginxの初期ページが表示されるはず
+
+ちなみにコンテナを止めるときは
+$ docker stop webserver
+再度開始するときは
+$ docker start webserver
+
+6. windowsのIPアドレスを確かめる
+Wi-Fiなり有線なりでLANに接続していると、10や192で始まるIPアドレスが付与されているはず
+コマンドプロンプトでipconfigで確認できる
+
+そのIPアドレスをwindowsで使っているブラウザにURLとして入力すると、先程のNgnixの初期ページがまた表示されるはず。
+
+7. 同一LANの端末からwebサーバーにアクセス
+同一LANの別の端末で、6.のIPアドレスを入力すると…またまたNgnixの初期ページが表示されるはず。
+やったぜ。
+
+今後の展望：外部ネットワークからアクセスできるようにしたい…けどセキュリティリスクこわい
+Windows端末にある私的な情報をすべて取り除き、仮想化用に使う準備ができてから検討したい
