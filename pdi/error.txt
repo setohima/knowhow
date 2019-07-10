@@ -1,0 +1,4 @@
+ Unexpected error during job metadata load
+ →十中八九、ほかの「ジョブ」や「データ変換」を実行するステップのファイルパスの指定に誤りがある。
+ 特に多いのは"ある端末での絶対パスを指定してしまったまま他の端末でそれを実行しようとしている"という場合。
+ ${Internal.Entry.Current.Directory}などのPentaho環境変数を用いて可変的に対応できるようにしましょう。

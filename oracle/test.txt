@@ -1,0 +1,5 @@
+oracleにも色々種類がある
+
+oracle_client←データベースにアクセスしさえできればいいやつ
+oracle_dbhome←データベース本体のやつ
+oracle_odac←色々な開発言語とデータベースをつなげるやつ
