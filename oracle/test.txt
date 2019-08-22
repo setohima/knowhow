@@ -1,5 +1,5 @@
 oracleにも色々種類がある
 
-oracle_client←データベースにアクセスしさえできればいいやつ
+oracle_client←Oracle Databaseをネットワーク越しにOracleデータベース（サーバ）をオペレーションしたり、管理したり、開発するためのツールが入っているソフトウェア
 oracle_dbhome←データベース本体のやつ
 oracle_odac←色々な開発言語とデータベースをつなげるやつ
